@@ -6,7 +6,7 @@ use std::io;
 use thiserror::Error;
 use std::ffi::OsStr;
 use indicatif::{ProgressBar, ProgressStyle};
-use colored::*;
+use colored::Colorize;
 
 /// A simple CLI tool to organize files by type
 #[derive(Parser)]
@@ -24,8 +24,12 @@ enum FileOrganizerError {
     WalkDir(#[from] walkdir::Error),
 }
 
+
+
 fn greet_user() {
-    println!("Welcome to the File Organizer CLI!".yellow());
+let hello_yellow = "Welcome to the File Organizer CLI!".yellow();
+
+    println!("{}", hello_yellow);
     println!("This tool will help you organize your files by moving them into folders based on their file types.");
     println!("Let's get started!\n");
 }
@@ -58,7 +62,7 @@ fn main() -> Result<(), FileOrganizerError> {
     let total_files = entries.iter().filter(|e| e.file_type().is_file()).count();
 
     let progress_bar = ProgressBar::new(total_files as u64);
-    progress_bar.set_style(
+progress_bar.set_style(
         ProgressStyle::default_bar()
             .template("{spinner:.green} [{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
             .progress_chars("#>-"),
