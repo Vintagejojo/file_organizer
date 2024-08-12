@@ -7,3 +7,5 @@ edition = "2021"
 thiserror = "1.0"
 clap = { version = "4.0", features = ["derive"] }
 walkdir = "2.3"
+indicatif = "0.16.2"
+colored = "2.0.0"
