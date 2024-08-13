@@ -24,10 +24,15 @@ enum FileOrganizerError {
     WalkDir(#[from] walkdir::Error),
 }
 
-
-
 fn greet_user() {
-let hello_yellow = "Welcome to the File Organizer CLI!".yellow();
+    let hello_yellow = format!(
+        "{} {} {} {}",
+        "Welcome".yellow(),
+        "to the".blue(),
+        "File Organizer".green(),
+        "CLI tool!".red()
+    );
+
 
     println!("{}", hello_yellow);
     println!("This tool will help you organize your files by moving them into folders based on their file types.");
@@ -39,12 +44,12 @@ fn generate_unique_name(new_path: &PathBuf) -> PathBuf {
     let mut counter = 1;
     while unique_path.exists() {
         let file_stem = new_path.file_stem().unwrap_or_else(|| OsStr::new(""));
-        let extension = new_path.extension().unwrap_or_else(|| OsStr::new(""));
+        let extension = new_path.extension().unwrap_or_else(|| OsStr::new("")).to_string_lossy().to_string();
         unique_path = new_path.with_file_name(format!(
             "{}_{}.{}",
             file_stem.to_string_lossy(),
             counter,
-            extension.to_string_lossy()
+            extension
         ));
         counter += 1;
     }
@@ -62,7 +67,7 @@ fn main() -> Result<(), FileOrganizerError> {
     let total_files = entries.iter().filter(|e| e.file_type().is_file()).count();
 
     let progress_bar = ProgressBar::new(total_files as u64);
-progress_bar.set_style(
+    progress_bar.set_style(
         ProgressStyle::default_bar()
             .template("{spinner:.green} [{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
             .progress_chars("#>-"),
@@ -104,7 +109,7 @@ progress_bar.set_style(
                         fs::create_dir_all(&new_dir)?;
                         dirs_created += 1;
                     }
-                    
+
                     let new_path = generate_unique_name(&new_dir.join(path.file_name().unwrap()));
                     fs::rename(path, new_path.clone())?;
                     println!("Moved file: {} to {}", path.display().to_string().green(), new_path.display().to_string().cyan());
@@ -119,7 +124,7 @@ progress_bar.set_style(
         println!("Total files moved: {}", files_moved.to_string().yellow());
         println!("Total directories created: {}", dirs_created.to_string().yellow());
     } else {
-        println!("Operation cancelled.");
+        println!("Operation cancelled. See ya later!");
     }
 
     Ok(())
