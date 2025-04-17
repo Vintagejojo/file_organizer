@@ -9,3 +9,4 @@ clap = { version = "4.0", features = ["derive"] }
 walkdir = "2.3"
 indicatif = "0.16.2"
 colored = "2.0.0"
+dirs = "6.0.0"
